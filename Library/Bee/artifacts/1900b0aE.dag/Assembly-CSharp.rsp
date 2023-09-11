@@ -369,6 +369,7 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/BodyController.cs"
+"Assets/FoodSpawner.cs"
 "Assets/HeadController.cs"
 -langversion:9.0
 

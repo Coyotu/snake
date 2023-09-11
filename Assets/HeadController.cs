@@ -2,42 +2,50 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Build.Content;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HeadController : MonoBehaviour
 {
 
     //0 = up, 1 right, 2 down, 3 left
-    private int direction=0;
+    [SerializeField] private FoodSpawner _foodSpawner;
+    [SerializeField] private GameObject _body;
+    [SerializeField] private TextMeshProUGUI _score;
+    
+    private List<GameObject> _bodyPart = new List<GameObject>();
+    private BoxCollider2D _collider;
+
+    private int direction = 0;
     private float delay = 1;
     private float _posX;
     private float _posY;
     private float startTime = 1.0f;
     private float lastTime = 0.0f;
-
-    [SerializeField] private GameObject _body;
- 
-    private List<GameObject> _bodyPart = new List<GameObject>();
     private int index = 0;
+    private int score = 0;
 
 
     private void Start()
     {
         _bodyPart = new List<GameObject>();
+        _foodSpawner.Spawn();
+        _collider = this.GetComponent<BoxCollider2D>();
     }
 
     private void Update()
     {
-       movement();
-       ChangePosition();
-       if(Input.GetKeyDown(KeyCode.E))
-           AddComponent();
-       UpdateBodiesDirection();
+        CheckWalls();
+        DefaultMovement();
+        ControlMovement();
+        UpdateBodiesDirection();
     }
 
-    private void movement()
+    private void DefaultMovement()
     {
         _posX = transform.position.x;
         _posY = transform.position.y;
@@ -67,7 +75,7 @@ public class HeadController : MonoBehaviour
         this.transform.position = new Vector3(_posX, _posY, this.transform.position.z);
     }
 
-    private void ChangePosition()
+    private void ControlMovement()
     {
         switch (direction)
         {
@@ -100,6 +108,8 @@ public class HeadController : MonoBehaviour
 
     private void AddComponent()
     {
+        score++;
+        _score.text = score.ToString();
         GameObject part = Instantiate(_body);
         _bodyPart.Add(part);
         BodyController _bodyController = _bodyPart[index].GetComponent<BodyController>();
@@ -110,18 +120,73 @@ public class HeadController : MonoBehaviour
 
     private async void UpdateBodiesDirection()
     {
-        int lastDirection = this.direction;
-        float delayCombined = delay;
         float x = this._posX;
         float y = this._posY;
         for (int i = 0; i < _bodyPart.Count; i++)
         {
-            BodyController _bodyController = _bodyPart[i].GetComponent<BodyController>();
-            await Task.Delay(TimeSpan.FromSeconds(delay));
-            _bodyController.move(x,y);
-            delayCombined += delay;
-            x = _bodyPart[i].transform.position.x;
-            y = _bodyPart[i].transform.position.y;
+            if (_bodyPart[i] != null)
+            {
+                BodyController _bodyController = _bodyPart[i].GetComponent<BodyController>();
+                await Task.Delay(TimeSpan.FromSeconds(delay));
+                _bodyController.move(x, y);
+                x = _bodyPart[i].transform.position.x;
+                y = _bodyPart[i].transform.position.y;
+            }
+        }
+    }
+
+    private async void EndGame()
+    {
+        Debug.Log("pauza");
+        Time.timeScale = 0;
+        await Task.Delay(TimeSpan.FromSeconds(3));
+        //RestartGame();
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Food(Clone)")
+        {
+            _foodSpawner.Spawn();
+            AddComponent();
+            Destroy(collision.gameObject);
+            if (delay > 0.1f)
+                delay -= 0.05f;
+        }
+        else
+        {
+            EndGame();
+
+        }
+    }
+
+    public void RestartGame()
+    {
+
+    }
+
+    private void CheckWalls()
+    {
+        if (transform.position.x <-9f)
+        {
+            direction = 3;
+            this.transform.position = new Vector3(9, this.transform.position.y, this.transform.position.z);
+        }
+        if (transform.position.x > 9f)
+        {
+            direction = 1;
+            this.transform.position = new Vector3(-9, this.transform.position.y, this.transform.position.z);
+        }
+        if (transform.position.y < -4.5f)
+        {
+            direction = 2;
+            this.transform.position = new Vector3(this.transform.position.x, 4.5f, this.transform.position.z);
+
+        }
+        if (transform.position.y > 4.5f)
+        {
+            direction = 0;
+            this.transform.position = new Vector3(this.transform.position.x, -4.5f, this.transform.position.z);
         }
     }
 }

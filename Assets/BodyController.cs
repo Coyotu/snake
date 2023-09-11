@@ -12,7 +12,11 @@ public class BodyController : MonoBehaviour
     private float _posY;
     private float startTime = 1.0f;
     private float lastTime = 0.0f;
-    
+
+    private void Start()
+    {
+    }
+
     public async void move(float x,float y)
     {
         _posX = transform.position.x;
