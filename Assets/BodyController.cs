@@ -13,7 +13,7 @@ public class BodyController : MonoBehaviour
     private float startTime = 1.0f;
     private float lastTime = 0.0f;
     
-    private async void movement()
+    public async void move(float x,float y)
     {
         _posX = transform.position.x;
         _posY = transform.position.y;
@@ -22,16 +22,16 @@ public class BodyController : MonoBehaviour
             switch (direction)
             {
                 case 0:
-                    _posY += 0.3f;
+                    _posY += 0.5f;
                     break;
                 case 1:
-                    _posX += 0.3f;
+                    _posX += 0.5f;
                     break;
                 case 2:
-                    _posY -= 0.3f;
+                    _posY -= 0.5f;
                     break;
                 case 3:
-                    _posX -= 0.3f;
+                    _posX -= 0.5f;
                     break;
             }
 
@@ -40,11 +40,11 @@ public class BodyController : MonoBehaviour
 
         startTime += Time.deltaTime;
 
-        this.transform.position = new Vector3(_posX, _posY, this.transform.position.z);
+        this.transform.position = new Vector3(x, y, this.transform.position.z);
     }
 
     private void Update()
     {
-        movement();
+        //movement();
     }
 }

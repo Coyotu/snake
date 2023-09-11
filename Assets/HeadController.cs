@@ -34,6 +34,7 @@ public class HeadController : MonoBehaviour
        ChangePosition();
        if(Input.GetKeyDown(KeyCode.E))
            AddComponent();
+       UpdateBodiesDirection();
     }
 
     private void movement()
@@ -45,16 +46,16 @@ public class HeadController : MonoBehaviour
             switch (direction)
             {
                 case 0:
-                    _posY += 0.3f;
+                    _posY += 0.5f;
                     break;
                 case 1:
-                    _posX += 0.3f;
+                    _posX += 0.5f;
                     break;
                 case 2:
-                    _posY -= 0.3f;
+                    _posY -= 0.5f;
                     break;
                 case 3:
-                    _posX -= 0.3f;
+                    _posX -= 0.5f;
                     break;
             }
 
@@ -101,17 +102,26 @@ public class HeadController : MonoBehaviour
     {
         GameObject part = Instantiate(_body);
         _bodyPart.Add(part);
+        BodyController _bodyController = _bodyPart[index].GetComponent<BodyController>();
+        BodyController _part = part.GetComponent<BodyController>();
+        _part.direction = _bodyController.direction;
         index++;
     }
 
-    private void UpdateBodiesDirection()
+    private async void UpdateBodiesDirection()
     {
+        int lastDirection = this.direction;
+        float delayCombined = delay;
+        float x = this._posX;
+        float y = this._posY;
         for (int i = 0; i < _bodyPart.Count; i++)
         {
-
             BodyController _bodyController = _bodyPart[i].GetComponent<BodyController>();
-            _bodyController.direction
-
+            await Task.Delay(TimeSpan.FromSeconds(delay));
+            _bodyController.move(x,y);
+            delayCombined += delay;
+            x = _bodyPart[i].transform.position.x;
+            y = _bodyPart[i].transform.position.y;
         }
     }
 }
