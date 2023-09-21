@@ -13,11 +13,8 @@ public class BodyController : MonoBehaviour
     private float startTime = 1.0f;
     private float lastTime = 0.0f;
 
-    private void Start()
-    {
-    }
-
-    public async void move(float x,float y)
+    //move the body to a position
+    public  void move(float x,float y)
     {
         _posX = transform.position.x;
         _posY = transform.position.y;
@@ -45,10 +42,5 @@ public class BodyController : MonoBehaviour
         startTime += Time.deltaTime;
 
         this.transform.position = new Vector3(x, y, this.transform.position.z);
-    }
-
-    private void Update()
-    {
-        //movement();
     }
 }

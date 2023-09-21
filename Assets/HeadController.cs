@@ -39,7 +39,9 @@ public class HeadController : MonoBehaviour
         ControlMovement();
         UpdateBodiesDirection();
     }
-
+    
+    
+    //Default movement is applied when you don't press any button
     private void DefaultMovement()
     {
         _posX = transform.position.x;
@@ -70,6 +72,7 @@ public class HeadController : MonoBehaviour
         this.transform.position = new Vector3(_posX, _posY, this.transform.position.z);
     }
 
+    //Control movement
     private void ControlMovement()
     {
         switch (direction)
@@ -101,6 +104,7 @@ public class HeadController : MonoBehaviour
         }
     }
 
+    //Add new body part
     private void AddComponent()
     {
         score++;
@@ -113,6 +117,8 @@ public class HeadController : MonoBehaviour
         index++;
     }
 
+    
+    //Update bodies direction to last position
     private async void UpdateBodiesDirection()
     {
         float x = this._posX;
@@ -130,14 +136,16 @@ public class HeadController : MonoBehaviour
         }
     }
 
+    //Stop Game
     private async void EndGame()
     {
         Debug.Log("pauza");
         Time.timeScale = 0;
         await Task.Delay(TimeSpan.FromSeconds(3));
-        //RestartGame();
     }
-
+    
+    
+    //Check collision with food or his body
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.name == "Food(Clone)")
@@ -154,12 +162,9 @@ public class HeadController : MonoBehaviour
 
         }
     }
+    
 
-    public void RestartGame()
-    {
-
-    }
-
+    //Check if the head is at screen's edge
     private void CheckWalls()
     {
         if (transform.position.x <-9f)

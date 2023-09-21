@@ -12,7 +12,7 @@ public class FoodSpawner : MonoBehaviour
     private double x;
     private double y;
 
-    // Update is called once per frame
+    //Randomly spawn food
     public void Spawn()
     {
         System.Random random = new System.Random();
